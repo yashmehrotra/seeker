@@ -7,7 +7,7 @@ int main()
     CURL *curl;
     CURLcode res;
 
-    string post_data = "{ \"index\" : { \"_index\" : \"tindex\", \"_type\" : \"type1\", \"_id\" : \"1\" } }\n{\"field1\" : \"value1\" }\n";
+    string post_data = "{ \"index\" : { \"_index\" : \"tindex\", \"_type\" : \"type1\", \"_id\" : \"2\" } }\n{\"name\" : \"yash\" }\n";
     cout <<post_data;
     curl_global_init(CURL_GLOBAL_ALL);
 
@@ -18,18 +18,16 @@ int main()
                    *        just as well be a https:// URL if that is what should receive the
                    *               data. */ 
         curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:9200/_bulk");
-                          /* Now specify the POST data */ 
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
-//curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, size);                            
-                              /* Perform the request, res will get the return code */ 
+
         res = curl_easy_perform(curl);
-                                  /* Check for errors */ 
-        if(res != CURLE_OK) {
+
+        if (res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-                                   /* always cleanup */ 
-    
             curl_easy_cleanup(curl);
         }
+
+        // Cleaning Up
         curl_global_cleanup();
     }
     return 0;
