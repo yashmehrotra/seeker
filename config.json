@@ -1,9 +1,0 @@
-{
-    "PGSQL": {
-        "USER": "test_user_1",
-        "PASSWORD": "test",
-        "HOST": "localhost",
-        "PORT": 5432,
-        "DATABASE": "db_test_1"
-    }
-}
