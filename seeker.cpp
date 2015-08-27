@@ -19,13 +19,17 @@ void* job_context = NULL;
 // Temp, first try hardcoding, then debug
 const char* elasticsearch_bulk_url = "http://localhost:9200/_bulk";
 
+//const char*  bulk_index_data = new const char[4000];
+string super_data;
+int bulk_size;
+
 void* gearman_index(gearman_job_st *job, void *context, size_t *result_size, gearman_return_t *ret_ptr)
 {
     char* msg;
     CURL *curl;
     CURLcode curl_response;
     curl_global_init(CURL_GLOBAL_ALL);
-    const char* es_string;
+    char* es_string;
     curl = curl_easy_init();
     const void* jobptr = gearman_job_workload(job);//this takes the data from the client
 
@@ -33,17 +37,30 @@ void* gearman_index(gearman_job_st *job, void *context, size_t *result_size, gea
         cout << "job: " << (char*) jobptr << std::endl;
         es_string = (char*)jobptr;
 
-        curl_easy_setopt(curl, CURLOPT_URL, elasticsearch_bulk_url);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, es_string);
+        //bulk_index_data
+        if (bulk_size == 10) {
+            curl_easy_setopt(curl, CURLOPT_URL, elasticsearch_bulk_url);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, super_data.c_str());
+            curl_response = curl_easy_perform(curl);
+            bulk_size = 0;
+            curl_global_cleanup();
+            super_data = "";
 
-        curl_response = curl_easy_perform(curl);
+            cout << "\n\n\nSubmitted Data\n\n\n";
+        }
+        if(bulk_size < 10) {
+            super_data += (string)es_string;
+            //cout<<"\t\t"<<super_data<<endl;
+            cout<<"bulk size"<<bulk_size<<endl;
+            bulk_size += 1;
+        }
         if (curl_response != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(curl_response));
             curl_easy_cleanup(curl);
         }
-        curl_global_cleanup();
+        // curl_global_cleanup();
     }
-    *ret_ptr = GEARMAN_SUCCESS ;
+    *ret_ptr = GEARMAN_SUCCESS;
     *result_size = 6;
     // return something smaller
     msg=strdup((char *)jobptr);
@@ -68,7 +85,9 @@ int main()
                                                  gearman_index,
                                                  job_context);
     
-    cout<<"Server Started";
+    cout<<"Server Started"<<endl;
+    bulk_size = 0;
+    super_data = "";
     // Try while true
     while(1) {
         gearman_return = gearman_worker_work(gearman_worker);

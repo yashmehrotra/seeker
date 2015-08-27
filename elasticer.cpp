@@ -9,6 +9,7 @@ int main()
     CURLcode res;
     const char* x="yash";
     const char* post_data = "{ \"index\" : { \"_index\" : \"tindex\", \"_type\" : \"type1\", \"_id\" : \"3\" } }\n{\"name\" : \"batman\" }\n";
+
     cout <<post_data;
     const char* es_host = "http://localhost:9200/_bulk";
     curl_global_init(CURL_GLOBAL_ALL);
