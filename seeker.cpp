@@ -19,7 +19,6 @@ void* job_context = NULL;
 // Temp, first try hardcoding, then debug
 const char* elasticsearch_bulk_url = "http://localhost:9200/_bulk";
 
-
 void* gearman_index(gearman_job_st *job, void *context, size_t *result_size, gearman_return_t *ret_ptr)
 {
     char* msg;
@@ -29,6 +28,7 @@ void* gearman_index(gearman_job_st *job, void *context, size_t *result_size, gea
     const char* es_string;
     curl = curl_easy_init();
     const void* jobptr = gearman_job_workload(job);//this takes the data from the client
+
     if (jobptr && curl) {
         cout << "job: " << (char*) jobptr << std::endl;
         es_string = (char*)jobptr;

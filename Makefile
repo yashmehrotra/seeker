@@ -1,2 +1,2 @@
 all:
-	g++ -g -Wall -o elastic.out elasticer.cpp -lcurl
+	g++ -g -Wall -o test.out seeker.cpp -lcurl -lgearman
